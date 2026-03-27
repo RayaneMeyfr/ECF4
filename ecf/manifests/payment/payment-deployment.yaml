@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: ecf-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+      - name: payment-service
+        image: rayanemeyfr/ecf-payment-service:latest
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_PORT
+        - name: DB_SCHEMA
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_SCHEMA
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_PASS
+        - name: PORT
+          value: "8080"
+        - name: ACTIVE_PROFILE
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: ACTIVE_PROFILE

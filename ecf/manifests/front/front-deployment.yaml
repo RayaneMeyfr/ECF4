@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-app-deployment
+  namespace: ecf-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front-app
+  template:
+    metadata:
+      labels:
+        app: front-app
+    spec:
+      containers:
+        - name: front-app
+          image: rayanemeyfr/ecf-front-app:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_AUTHENTICATION_SERVICE_URL
+              value: "http://auth-service:8080"
+            - name: REACT_APP_COMMON_DATA_SERVICE_URL
+              value: "http://common-data-service:9000"
+            - name: REACT_APP_PAYMENT_SERVICE_URL
+              value: "http://payment-service:9050"

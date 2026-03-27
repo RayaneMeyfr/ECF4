@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: ecf-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+      - name: auth-service
+        image: rayanemeyfr/ecf-auth-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_PORT
+        - name: DB_SCHEMA
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_SCHEMA
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_PASS
+        - name: ACTIVE_PROFILE
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: ACTIVE_PROFILE
+        - name: PORT
+          value: "8080"
+        command:
+        - "./wait-for-it.sh"
+        - "mysql:3306"
+        - "--timeout=60"
+        - "--strict"
+        - "--"
+        - "java"
+        - "-jar"
+        - "app.jar"
